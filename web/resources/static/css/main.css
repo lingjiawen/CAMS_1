@@ -1,0 +1,81 @@
+.clear:after{display:block;clear:both;content:"";visibility:hidden;height:0}
+.clear{zoom:1}
+
+.amount_total {
+    float:right;
+    margin: 0 17px 0 0!important;
+    font-size: 16px !important;
+}
+#app {
+    height: 100%;
+}
+.amount_total span {
+    color: red
+}
+
+.mycol-4 {
+    width: 30%;
+    text-align: left;
+}
+
+.mycol-8 {
+    width: 70%;
+    text-align: left;
+}
+
+#id_card {
+    display: flex;
+    align-items: center;
+    height: 140px;
+    background-color: #2196f3;
+    margin: 0;
+}
+
+#id_card img {
+    width: 100px;
+    border-radius: 90px;
+}
+
+.my_name {
+    color: white;
+    padding:20px;
+    text-align: center;
+}
+
+.row-inner {
+    width: 33%;
+    text-align: center;
+}
+
+#my_information {
+    height: 80px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+
+    color: #6d6d72;
+}
+
+/*#my_information:nth-child(even) {*/
+    /*border: 1px solid #6d6d72;*/
+    /*border-bottom: 0px;*/
+    /*border-top: 0px;*/
+/*}*/
+
+.ios_title {
+    margin: 0 auto;!important;
+}
+
+.item-title, .item-center, .item-right {
+    line-height: 24px;
+}
+
+.item-title {
+    font-weight:normal!important;
+}
+
+.dialog-input {
+    border: 0px!important;
+    border-bottom: 1px solid rgba(0,0,0,0.2)!important;
+    background: transparent!important;
+}
