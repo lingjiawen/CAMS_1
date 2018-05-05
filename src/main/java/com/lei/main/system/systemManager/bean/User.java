@@ -1,13 +1,10 @@
 package com.lei.main.system.systemManager.bean;
 
-import com.lei.main.comm.util.Common;
 import com.lei.util.TableName;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
 
 @ApiModel("用户")
 @Entity
@@ -36,6 +33,8 @@ public class User {
     private Integer leaveTimes;
     @ApiModelProperty("旷课次数")
     private Integer cutTimes;
+    @ApiModelProperty("头像")
+    private String headLogo;
 
     public User() {}
 
@@ -152,5 +151,13 @@ public class User {
 
     public void setCutTimes(Integer cutTimes) {
         this.cutTimes = cutTimes;
+    }
+    @Column(name="head_logo")
+    public String getHeadLogo() {
+        return headLogo;
+    }
+
+    public void setHeadLogo(String headLogo) {
+        this.headLogo = headLogo;
     }
 }
