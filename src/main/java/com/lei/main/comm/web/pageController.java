@@ -1,5 +1,6 @@
 package com.lei.main.comm.web;
 
+import com.lei.main.comm.action.LoginController;
 import com.lei.main.comm.bean.Message;
 import com.lei.main.system.attendance.action.AttendanceController;
 import com.lei.main.system.course.action.CourseController;
@@ -22,6 +23,8 @@ import java.util.Map;
 public class pageController {
 
     @Autowired
+    private LoginController loginController;
+    @Autowired
     private UserManagerController userManagerController;
     @Autowired
     private GroupController groupController;
@@ -32,9 +35,12 @@ public class pageController {
 
     @ApiIgnore
     @RequestMapping(value = "/login")
-    public String studentLogin(Model model
+    public String studentLogin(Model model, HttpServletRequest request, String phone, String mm
     ){
-       return "login";
+        Message<String> m = loginController.checkLogin(request, phone, mm);
+        model.addAttribute("code", m.getCode());
+        model.addAttribute("message", m.getMessage());
+        return "login";
     }
 
     @ApiIgnore

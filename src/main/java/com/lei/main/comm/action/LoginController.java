@@ -62,14 +62,11 @@ public class LoginController {
     }
 
     @ApiOperation(value = "验证登录", notes = "1成功，2密码错误，3用户不存在，4没有权限，5系统错误")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", dataType = "String", name = "phone", value = "电话", required = true),
-            @ApiImplicitParam(paramType = "query", dataType = "String", name = "mm", value = "密码", required = true)})
     @RequestMapping(value = "checkLogin.do", method = RequestMethod.POST)
     @ResponseBody
-    public Message<String> checkLogin(HttpServletRequest request, HttpServletResponse response){
-        String phone = request.getParameter("phone");
-        String mm =request.getParameter("mm");
+    public Message<String> checkLogin(HttpServletRequest request,
+                                      @ApiParam("电话")@RequestParam String phone,
+                                      @ApiParam("密码")@RequestParam String mm){
         String msg = "";
         String msgCode = "";
         try {
