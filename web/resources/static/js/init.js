@@ -55,6 +55,21 @@ var app = new Framework7({
             }
         },
         {
+            path: '/group_detail/',
+            url: '/group_detail',
+            on: {
+                pageInit: function (e, page) {
+                },
+
+                pageBeforeIn: function (e, page) {
+                },
+
+                pageAfterIn: function (e, page) {
+                }
+            }
+        },
+
+        {
             path: '/new_friend/',
             url: '/new_friend',
             on: {
@@ -106,7 +121,7 @@ var app = new Framework7({
             url: '/student_information_school',
             on: {
                 pageInit: function (e, page) {
-                   searchSchool();
+                    searchSchool();
                 },
                 pageBeforeIn: function (e, page) {
                 }

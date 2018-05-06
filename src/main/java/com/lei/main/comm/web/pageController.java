@@ -58,6 +58,13 @@ public class pageController {
     }
 
     @ApiIgnore
+    @RequestMapping(value = "/group_detail")
+    public String groupDetail(Model model
+    ){
+        return "group_detail";
+    }
+
+    @ApiIgnore
     @RequestMapping(value = "/new_friend")
     public String newFriend(Model model
     ){

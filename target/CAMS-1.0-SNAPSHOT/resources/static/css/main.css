@@ -57,9 +57,9 @@
 }
 
 /*#my_information:nth-child(even) {*/
-    /*border: 1px solid #6d6d72;*/
-    /*border-bottom: 0px;*/
-    /*border-top: 0px;*/
+/*border: 1px solid #6d6d72;*/
+/*border-bottom: 0px;*/
+/*border-top: 0px;*/
 /*}*/
 
 .ios_title {
@@ -78,4 +78,32 @@
     border: 0px!important;
     border-bottom: 1px solid rgba(0,0,0,0.2)!important;
     background: transparent!important;
+}
+
+.table {
+    display: table;
+    width: 100%;
+}
+
+.table_cell {
+    display: table-cell;
+    padding: 10px;
+    text-align: center;
+    width: 20%;
+}
+
+.table_row {
+    display: table-row;
+    width: 100%;
+}
+
+.table_cell img {
+    width: 50px;
+    border-radius: 10px;
+}
+
+.button:disabled,
+button[disabled] {
+    color: white!important;
+    background-color: grey!important;
 }

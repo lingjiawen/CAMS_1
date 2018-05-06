@@ -16,7 +16,7 @@
             <ul>
                 <li>
                     <div class="item-content">
-                        <div class="item-media"><img src="/student_manager/static/app/easy_student/img/zhangsan.jpeg"
+                        <div class="item-media"><img src="/resources/static/img/zhangsan.jpeg"
                                                      width="80"/></div>
                         <div class="item-inner">
                             <div class="item-title-row">

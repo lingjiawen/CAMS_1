@@ -3,11 +3,6 @@
     <%--{# 导航栏 #}--%>
     <div class="navbar">
         <div class="navbar-inner sliding">
-            <div class="right">
-                <a class="link popover-open" href="#" data-popover=".popover-links">
-                    <i class="icon f7-icons">bars</i>
-                </a>
-            </div>
             <div class="title ios-only ios_title" style="left: 0!important;"><img
                     src="/resources/static/img/app_logo.png" height="44px" class="ios_title">
             </div>
@@ -49,7 +44,7 @@
             <div class="list media-list">
                 <ul>
                     <li>
-                        <a href="#" class="item-link item-content">
+                        <a href="/group_detail/" class="item-link item-content">
                             <div class="item-media"><img src="/resources/static/img/groups.jpg" width="44"/></div>
                             <div class="item-inner">
                                 <div class="item-title-row">
@@ -294,22 +289,4 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="popover popover-links">
-    <div class="popover-inner">
-        <div class="list">
-            <ul>
-                <li><a class="list-button item-link"
-                       onclick="app.router.navigate('/dispatch/', {ignoreCache: true})">配货管理</a></li>
-                <li><a class="list-button item-link"
-                       onclick="app.router.navigate('/refund/', {ignoreCache: true})">退货管理</a></li>
-                <li><a class="list-button item-link"
-                       onclick="app.router.navigate('/relogin/', {ignoreCache: true})">切换账号</a></li>
-                <!--<li><a class="list-button item-link" href="/map/">地图</a></li>-->
-            </ul>
-        </div>
-    </div>
-</div>
-</div>
 </div>
