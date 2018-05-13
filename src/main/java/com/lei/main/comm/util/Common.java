@@ -71,7 +71,7 @@ public class Common {
         return obj;
     }
 
-    public static Map<String, ?> objectToMap(Object obj) {
+    public static Map<String, Object> objectToMap(Object obj) {
         if(obj == null)
             return null;
 

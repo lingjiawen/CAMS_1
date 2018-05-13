@@ -9,6 +9,8 @@ import java.util.Map;
 public interface CourseService {
     Course getCourseInfoById(String id);
 
+    Course getAttendCourse(String id);
+
     DataStore getCourseListByName(Map<String,String> map);
 
     List getTodayCourseList(String id);
@@ -16,4 +18,6 @@ public interface CourseService {
     Boolean saveCourseInfo(Course course);
 
     List getCourseGroupList(String id);
+
+    List getCourseGroupUserList(String cid, String gid);
 }

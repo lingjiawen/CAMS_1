@@ -18,6 +18,7 @@ public class TempCourse extends Entity {
     private Double maxLat;
     private Long duration;
     private Time startTime;
+    private Time endTime;
     private Integer num;
 
     public TempCourse() {}
@@ -29,6 +30,7 @@ public class TempCourse extends Entity {
         this.lat = course.getLat();
         this.duration = (course.getEndTime().getTime() - course.getStartTime().getTime())/(60 * 1000);
         this.startTime = course.getStartTime();
+        this.endTime = course.getEndTime();
         this.num = course.getStuNum();
 
         Position p = new Position(lng, lat);
@@ -126,6 +128,14 @@ public class TempCourse extends Entity {
         this.startTime = startTime;
     }
 
+    public Time getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Time endTime) {
+        this.endTime = endTime;
+    }
+
     public Integer getNum() {
         return num;
     }
@@ -147,6 +157,7 @@ public class TempCourse extends Entity {
                 ", maxLat=" + maxLat +
                 ", duration=" + duration +
                 ", startTime=" + startTime +
+                ", endTime=" + endTime +
                 ", num=" + num +
                 '}';
     }

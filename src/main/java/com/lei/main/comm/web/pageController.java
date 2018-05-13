@@ -35,18 +35,25 @@ public class pageController {
 
     @ApiIgnore
     @RequestMapping(value = "/login")
-    public String studentLogin(Model model, HttpServletRequest request, String phone, String mm
+    public String studentLogin(Model model
     ){
-        Message<String> m = loginController.checkLogin(request, phone, mm);
-        model.addAttribute("code", m.getCode());
-        model.addAttribute("message", m.getMessage());
         return "login";
     }
 
     @ApiIgnore
     @RequestMapping(value = "/main")
-    public String studentMain(Model model
+    public String studentMain(Model model, HttpServletRequest request
     ){
+        Message m = groupController.getUserGroupList(request);
+        model.addAttribute("group_list", m.getMessage());//群组列表
+        m = userManagerController.getFriendList(request);
+        model.addAttribute("friend_list", m.getMessage());//好友列表
+        m = courseController.getAttendCourse(request);
+        model.addAttribute("current_course", m.getMessage());//当前签到课程
+        m = courseController.getTodayCourseList(request);
+        model.addAttribute("today_course", m.getMessage());//今日课程
+        m = userManagerController.getUserById(request, null);
+        model.addAttribute("user", m.getMessage());//用户信息
         return "main";
     }
 
@@ -60,7 +67,11 @@ public class pageController {
     @ApiIgnore
     @RequestMapping(value = "/group_detail")
     public String groupDetail(Model model
-    ){
+    ){String id = "1";
+        Message m = groupController.getGroupUserList(id);
+        model.addAttribute("users", m.getMessage());
+        m = groupController.getGroupTodayCourse(id);
+        model.addAttribute("course", m.getMessage());
         return "group_detail";
     }
 
@@ -80,9 +91,9 @@ public class pageController {
 
     @ApiIgnore
     @RequestMapping(value = "/student_information")
-    public String studentInformation(Model model, String id, HttpServletRequest request
+    public String studentInformation(Model model, HttpServletRequest request
     ){
-        Message<User> m = userManagerController.getUserById(request, id);
+        Message<User> m = userManagerController.getUserById(request, null);
         model.addAttribute("code", m.getCode());
         model.addAttribute("message", m.getMessage());
         return "student_information";
@@ -90,8 +101,11 @@ public class pageController {
 
     @ApiIgnore
     @RequestMapping(value = "/course_detail")
-    public String courseDetail(Model model
+    public String courseDetail(Model model, String id
     ){
+        Message m = courseController.getCourseById(id);
+        model.addAttribute("code", m.getCode());
+        model.addAttribute("message", m.getMessage());
         return "course_detail";
     }
 

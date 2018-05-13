@@ -4,6 +4,7 @@ import com.lei.main.comm.dao.BaseDao;
 import com.lei.main.system.group.bean.Group;
 import com.lei.main.system.group.bean.GroupCourse;
 import com.lei.main.system.group.bean.GroupUser;
+import com.lei.main.system.systemManager.bean.User;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ public interface GroupDao extends BaseDao {
     Group getGroupById(String id);
 
     List getUserGroupList(String id);
+
+    List<User> getGroupUserList(String id);
 
     Boolean saveGroupInfo(Group group);
 

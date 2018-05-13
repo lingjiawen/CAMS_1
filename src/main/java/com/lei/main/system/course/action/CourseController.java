@@ -4,6 +4,7 @@ import com.lei.main.comm.bean.Message;
 import com.lei.main.comm.dao.page.DataStore;
 import com.lei.main.comm.util.Common;
 import com.lei.main.system.attendance.bean.Attendance;
+import com.lei.main.system.attendance.bean.Member;
 import com.lei.main.system.attendance.service.AttendanceService;
 import com.lei.main.system.course.bean.Course;
 import com.lei.main.system.course.service.CourseService;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,15 @@ public class CourseController {
     @ResponseBody
     public Message<Course> getCourseById(@ApiParam("课程编号")@RequestParam String id) {
         Course course = courseService.getCourseInfoById(id);
+        return Common.messageBox(course);
+    }
+
+    @ApiOperation(value = "获取当前进行的课程", notes ="0失败，1成功")
+    @RequestMapping(value = "getAttendCourse.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Message<Course> getAttendCourse(HttpServletRequest request) {
+        User user = Common.getCurrentUser(request);
+        Course course = courseService.getAttendCourse(user.getUserId().toString());
         return Common.messageBox(course);
     }
 
@@ -155,7 +166,31 @@ public class CourseController {
         }
     }
 
-    @ApiOperation(value = "学生加入群组的所有课程", notes ="0失败，1成功，2群组不存在，3不在群组中")
+    @ApiOperation(value = "获取课程出勤情况", notes ="0失败，1成功")
+    @RequestMapping(value = "getCourseAttendInfo.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Message<List> getCourseAttendInfo(@ApiParam("群组编号")@RequestParam String gid,
+                                             @ApiParam("课程编号")@RequestParam String cid) {
+        List l = new ArrayList();
+        List list = courseService.getCourseGroupUserList(gid, cid);
+        for (Object o : list) {
+            Map map = Common.objectToMap(o);
+            Member m = attendanceService.getCourseMemberById(cid, map.get("user_id").toString());
+            if (m == null) {//是否签到
+                map.put("is_attend", 0);
+            } else {
+                map.put("is_attend", m.getIsAttend());
+            }
+            try {
+                l.add(Common.mapToObject(map, Object.class));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return Common.messageBox(l);
+    }
+
+    /*@ApiOperation(value = "学生加入群组的所有课程", notes ="0失败，1成功，2群组不存在，3不在群组中")
     @RequestMapping(value = "joinGroupCourse.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<String> joinGroupCourse(HttpServletRequest request, @ApiParam("群组编号")@RequestParam String gid) {
@@ -174,5 +209,5 @@ public class CourseController {
             joinCourseById(request, id);
         }
         return Common.messageBox(Common.success);
-    }
+    }*/
 }

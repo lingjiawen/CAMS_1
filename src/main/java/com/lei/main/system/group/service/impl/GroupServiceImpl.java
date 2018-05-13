@@ -34,6 +34,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public List<User> getGroupUserList(String id) {
+        return groupDao.getGroupUserList(id);
+    }
+
+    @Override
     public Boolean saveGroupInfo(Group group) {
         return groupDao.saveGroupInfo(group);
     }
@@ -74,7 +79,7 @@ public class GroupServiceImpl implements GroupService {
                             groupUser.setInvitation(Integer.parseInt(inviter));//未接受或拒绝则更新邀请人及状态
                         }
                     } else {
-                        groupUser = new GroupUser(g.getId(), Integer.parseInt(id[i]), Integer.parseInt(inviter), 0);
+                        groupUser = new GroupUser(g.getId(), Integer.parseInt(id[i]), Integer.parseInt(inviter), 1);//邀请直接加入
                     }
                     groupDao.saveGroupUserInfo(groupUser);
                     num++;

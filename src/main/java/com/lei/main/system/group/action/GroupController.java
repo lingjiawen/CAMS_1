@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value="/group")
@@ -120,6 +122,14 @@ public class GroupController {
         return Common.messageBox(list);
     }
 
+    @ApiOperation(value = "获取群组用户列表", notes ="0失败，1成功")
+    @RequestMapping(value = "getGroupUserList.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Message<List> getGroupUserList(@ApiParam("群组编号")@RequestParam String id) {
+        List list = groupService.getGroupUserList(id);
+        return Common.messageBox(list);
+    }
+
     @ApiOperation(value = "邀请加入群组", notes ="0失败，1成功，2群组不存在，3不在群中")
     @RequestMapping(value = "inviteJoinGroup.do", method = RequestMethod.POST)
     @ResponseBody
@@ -152,7 +162,41 @@ public class GroupController {
         }
     }
 
-    @ApiOperation(value = "处理群组邀请", notes ="0失败，1成功，2邀请不存在，3不是该邀请对象，4邀请已处理，5method不为1或2")
+    @ApiOperation(value = "退出群组", notes ="0失败，1成功，2不在群组中")
+    @RequestMapping(value = "exitGroup.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Message<String> exitGroup(HttpServletRequest request,
+                                     @ApiParam("群组编号")@RequestParam String id) {
+        User user = Common.getCurrentUser(request);
+        if (id != null) {
+            GroupUser groupUser = groupService.getGroupUserById(id, user.getUserId().toString());
+            if (groupUser == null) {
+                return Common.messageBox("2", "不在群组中");
+            }
+            try {
+                groupService.deleteGroupUser(groupUser.getId().toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Common.messageBox(Common.failed);
+            }
+        }
+        return Common.messageBox(Common.success);
+    }
+
+    @ApiOperation(value = "获取群组今日课程", notes ="0失败，1成功")
+    @RequestMapping(value = "getGroupTodayCourse.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Message<Set> getGroupTodayCourse(@ApiParam("群组编号")@RequestParam String id) {
+        List<User> users = groupService.getGroupUserList(id);
+        Set<Course> set = new HashSet<>();
+        for (User user : users) {
+            List list = courseService.getTodayCourseList(user.getUserId().toString());
+            set.addAll(list);
+        }
+        return Common.messageBox(set);
+    }
+
+    /*@ApiOperation(value = "处理群组邀请", notes ="0失败，1成功，2邀请不存在，3不是该邀请对象，4邀请已处理，5method不为1或2")
     @RequestMapping(value = "handleGroupInvite.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<String> handleGroupInvite(HttpServletRequest request,
@@ -182,9 +226,9 @@ public class GroupController {
         } else {
             return Common.messageBox(Common.failed);
         }
-    }
+    }*/
 
-    @ApiOperation(value = "添加群组课程", notes ="0失败，1成功，2群组不存在，3不在群中，4课程不存在")
+    /*@ApiOperation(value = "添加群组课程", notes ="0失败，1成功，2群组不存在，3不在群中，4课程不存在")
     @RequestMapping(value = "addGroupCourse.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<String> addGroupCourse(HttpServletRequest request,
@@ -211,5 +255,5 @@ public class GroupController {
         } else {
             return Common.messageBox(Common.failed);
         }
-    }
+    }*/
 }

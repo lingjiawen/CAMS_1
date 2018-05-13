@@ -68,6 +68,21 @@ public class Course {
         this.isOverdue = 0;
     }
 
+    @Override
+    public int hashCode() {
+        return this.id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Course) {
+            Course course = (Course) obj;
+            return this.name.equals(course.name);
+        } else {
+            return false;
+        }
+    }
+
     @Id
     @Column(name="id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)

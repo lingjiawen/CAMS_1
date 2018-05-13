@@ -7,19 +7,19 @@ function loginBtn() {
 function loginAct(username, password) {
 
     app.preloader.show();
-    app.request.post('/api/login_auth', {
-        username: username,
-        password: password,
+    app.request.post('/login/checkLogin.do', {
+        phone: username,
+        mm: password,
     }, function (data) {
         var jsonResult = JSON.parse(data)
-        if (jsonResult.code) {
+        if (jsonResult.code==1) {
             app.preloader.hide();
             app.router.navigate("/main/", {
                 ignoreCache: true,
             })
         } else {
             app.preloader.hide();
-            app.dialog.alert('账号/密码错误', jsonResult.msg);
+            app.dialog.alert(jsonResult.message, '');
         }
     }, function () {
         app.preloader.hide();

@@ -9,6 +9,7 @@ import java.util.Map;
 public class Constant {
     public static final String courseSet = "courses";
     public static final String groupPre = "g";
+    public static final String userPre = "u";
 
     public static final String schemaPattern = "KK";
     public static final String dateFormat = "yyyy-MM-dd HH:mm:ss";

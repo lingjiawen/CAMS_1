@@ -39,7 +39,7 @@ public class GroupUser {
 
     public void setInvitation(Integer inviter) {
         this.inviter = inviter;
-        this.status = 0;
+        this.status = 1;
         this.updateTime = Timestamp.valueOf(Common.getNow());
     }
 

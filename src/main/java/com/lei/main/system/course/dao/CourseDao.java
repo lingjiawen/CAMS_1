@@ -11,6 +11,8 @@ public interface CourseDao extends BaseDao {
 
     Course getCourseInfoById(String id);
 
+    Course getAttendCourse(String id);
+
     List getTodayCourseList(String id);
 
     DataStore getCourseListByName(Map<String,String> map);
@@ -18,4 +20,6 @@ public interface CourseDao extends BaseDao {
     Boolean saveCourseInfo(Course course);
 
     List getCourseGroupList(String id);
+
+    List getCourseGroupUserList(String cid, String gid);
 }

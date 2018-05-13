@@ -52,9 +52,9 @@ public class TaskController {
         }
         System.out.println("天定时任务");
     }
-    /*@ApiOperation(value = "任务", notes ="无")
+    @ApiOperation(value = "任务", notes ="无")
     @RequestMapping(value = "attendanceTask.do", method = RequestMethod.POST)
-    @ResponseBody*/
+    @ResponseBody
     @Scheduled(cron = "0 0/5 5-23 * * ? ") // [秒] [分] [时] [日] [月] [周] [年]
     public void attendanceTask() {
         try {

@@ -189,7 +189,8 @@ public class UserManagerController {
     @ResponseBody
     public Message getUserById(HttpServletRequest request, @ApiParam("编号")@RequestParam String id) {
         User user = Common.getCurrentUser(request);
-        if (id.equals(user.getUserId().toString())) {
+        if (id==null||id.equals(user.getUserId().toString())) {
+            id = user.getUserId().toString();
             user = userManager.getUserById(id);
             Common.updateSessionUser(request, user);
         } else {

@@ -9,6 +9,7 @@ import com.lei.main.system.course.bean.Course;
 import com.lei.main.system.course.service.CourseService;
 import com.lei.main.system.group.bean.GroupUser;
 import com.lei.main.system.group.service.GroupService;
+import com.lei.util.DateUtils;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Time;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -44,54 +49,58 @@ public class AttendanceController {
      * @throws InterruptedException
      */
     @Async
-    public void attendance(String cid) throws InterruptedException {
+    public void attendance(String cid) {
         TempCourse t = attendanceService.getTempCourse(cid);
-        List<Map> list = courseService.getCourseGroupList(cid);
         if (t == null) {
             return;
         }
-        for (Map o : list) {
-            String gid = o.get("group_id").toString();
-            Map<String, Member> map = attendanceService.getGroupMemberList(gid, t.getDuration());
-            for (Member m : map.values()) {
-                //todo
-                if (!t.judgePosition(m.getLng(), m.getLat())) {
-                    m.setStatus(1);//迟到
-                    try {
-                        attendanceService.saveGroupMember(gid, m);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    pushNotice(m.getId().toString());//通知提醒
+        Map<String, Member> map = attendanceService.getCourseMemberList(cid);
+        for (Member m : map.values()) {
+            //todo
+            if (!t.judgePosition(m.getLng(), m.getLat())) {
+                m.setStatus(1);//迟到
+                try {
+                    attendanceService.saveCourseMember(cid, m);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                //pushNotice(m.getId().toString());//通知提醒
             }
         }
-        System.out.println(Thread.currentThread().getName());
+        //System.out.println(Thread.currentThread().getName());
     }
 
-    @ApiOperation(value = "记录用户位置", notes ="0失败，1成功，2课程不存在，3课程未开始，4不在群组中")
+    @ApiOperation(value = "记录用户位置", notes ="0失败，1成功，2课程未开始，3课程已结束")
     @RequestMapping(value = "recordPosition.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<String> recordPosition(HttpServletRequest request,
                                   @ApiParam("课程编号")@RequestParam String cid,
-                                  @ApiParam("群组编号")@RequestParam String gid,
                                   @ApiParam("经度")@RequestParam Double lng,
                                   @ApiParam("纬度")@RequestParam Double lat) {
         Integer uid = Common.getCurrentUser(request).getUserId();
-        Course course = courseService.getCourseInfoById(cid);
-        if (course == null) {
-            return Common.messageBox("2", "所选课程不存在");
+        TempCourse t = attendanceService.getTempCourse(cid);
+        if (t == null) {
+            return Common.messageBox("2", "所选课程还未开始");
         }
-        if (course.getIsAttend() != 3) {
-            return Common.messageBox("3", "所选课程还未开始");
-        }
-        GroupUser groupUser = groupService.getGroupUserById(gid, uid.toString());
-        if (groupUser == null) {
-            return Common.messageBox("4", "不在该群组中");
-        }
-        Member m = new Member(uid, lng, lat);
+        Time t1 = t.getEndTime();
+        Date t2 = null;
         try {
-            attendanceService.saveGroupMember(gid, m);
+            t2 = DateUtils.parseTime(DateUtils.currentTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if (t1.before(t2)) {
+            return Common.messageBox("3", "课程已结束");
+        }
+        Member m;
+        if (t.judgePosition(lng, lat)) {//是否正确签到
+            m = new Member(uid, lng, lat, 1);
+        } else {
+            m = new Member(uid, lng, lat, 0);
+        }
+        try {
+            attendanceService.saveCourseMember(cid, m);
         } catch (Exception e) {
             e.printStackTrace();
             return Common.messageBox(Common.failed);
@@ -107,4 +116,5 @@ public class AttendanceController {
         }
         System.out.println(id+"迟到啦？！！");
     }
+
 }

@@ -12,6 +12,8 @@ public interface AttendanceDao extends BaseDao {
 
     Attendance getAttendanceById(String uid, String cid);
 
+    List getCourseUserList(String id);
+
     Boolean saveAttendanceInfo(Attendance attendance);
 
     void cancelCurrentWeek() throws Exception;

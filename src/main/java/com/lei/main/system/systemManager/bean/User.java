@@ -1,5 +1,6 @@
 package com.lei.main.system.systemManager.bean;
 
+import com.lei.main.system.attendance.bean.Member;
 import com.lei.util.TableName;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -27,12 +28,12 @@ public class User {
     @ApiModelProperty("备注")
     private String remark;
     private Integer isDelete;//是否删除 0-未删 ， 1-删除
-    @ApiModelProperty("迟到次数")
-    private Integer lateTimes;
-    @ApiModelProperty("早退次数")
-    private Integer leaveTimes;
     @ApiModelProperty("旷课次数")
-    private Integer cutTimes;
+    private Integer absentTimes;
+    @ApiModelProperty("签到次数")
+    private Integer attendTimes;
+    @ApiModelProperty("今日旷课次数")
+    private Integer todayAbsentTimes;
     @ApiModelProperty("头像")
     private String headLogo;
 
@@ -44,15 +45,28 @@ public class User {
         this.userPassword = pwd;
         this.status = 1;
         this.isDelete = 0;
-        this.lateTimes = 0;
-        this.leaveTimes = 0;
-        this.cutTimes = 0;
+        this.absentTimes = 0;
+        this.attendTimes = 0;
+        this.todayAbsentTimes = 0;
     }
 
     public void cleanPrivateInfo() {
         this.userPassword = null;
     }
 
+    public void registerTimes() {
+        this.absentTimes += 1;
+        this.todayAbsentTimes += 1;
+    }
+
+    public void registerTimes(Member member) {
+        if (member.getIsAttend() == 1) {
+            this.attendTimes += 1;
+        } else {
+            this.absentTimes += 1;
+            this.todayAbsentTimes += 1;
+        }
+    }
     @Id
     @Column(name="id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -128,29 +142,29 @@ public class User {
     public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
     }
-    @Column(name="late_times")
-    public Integer getLateTimes() {
-        return lateTimes;
+    @Column(name="absent_times")
+    public Integer getAbsentTimes() {
+        return absentTimes;
     }
 
-    public void setLateTimes(Integer lateTimes) {
-        this.lateTimes = lateTimes;
+    public void setAbsentTimes(Integer absentTimes) {
+        this.absentTimes = absentTimes;
     }
-    @Column(name="leave_times")
-    public Integer getLeaveTimes() {
-        return leaveTimes;
-    }
-
-    public void setLeaveTimes(Integer leaveTimes) {
-        this.leaveTimes = leaveTimes;
-    }
-    @Column(name="cut_times")
-    public Integer getCutTimes() {
-        return cutTimes;
+    @Column(name="attend_times")
+    public Integer getAttendTimes() {
+        return attendTimes;
     }
 
-    public void setCutTimes(Integer cutTimes) {
-        this.cutTimes = cutTimes;
+    public void setAttendTimes(Integer attendTimes) {
+        this.attendTimes = attendTimes;
+    }
+    @Column(name="today_absent_times")
+    public Integer getTodayAbsentTimes() {
+        return todayAbsentTimes;
+    }
+
+    public void setTodayAbsentTimes(Integer todayAbsentTimes) {
+        this.todayAbsentTimes = todayAbsentTimes;
     }
     @Column(name="head_logo")
     public String getHeadLogo() {

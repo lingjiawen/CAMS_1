@@ -21,9 +21,10 @@ public class Attendance {
     @ApiModelProperty("早退次数")
     private Integer leaveTimes;
     @ApiModelProperty("旷课次数")
-    private Integer cutTimes;
+    private Integer absentTimes;
     @ApiModelProperty("是否退出")
     private Integer isQuit;
+
 
     public Attendance() { }
 
@@ -32,8 +33,21 @@ public class Attendance {
         this.courseId = courseId;
         this.lateTimes = 0;
         this.leaveTimes = 0;
-        this.cutTimes = 0;
+        this.absentTimes = 0;
         this.isQuit = 0;
+    }
+
+    public void registerTimes() {
+        this.absentTimes += 1;
+    }
+
+    public void registerTimes(Member member) {
+        if (member.getIsAttend() == 0) {
+            this.absentTimes += 1;
+        }
+        if (member.getStatus() == 1) {
+            this.lateTimes += 1;
+        }
     }
 
     @Id
@@ -80,13 +94,13 @@ public class Attendance {
     public void setLeaveTimes(Integer leaveTimes) {
         this.leaveTimes = leaveTimes;
     }
-    @Column(name="cut_times")
-    public Integer getCutTimes() {
-        return cutTimes;
+    @Column(name="absent_times")
+    public Integer getAbsentTimes() {
+        return absentTimes;
     }
 
-    public void setCutTimes(Integer cutTimes) {
-        this.cutTimes = cutTimes;
+    public void setAbsentTimes(Integer absentTimes) {
+        this.absentTimes = absentTimes;
     }
     @Column(name="is_quit")
     public Integer getIsQuit() {

@@ -36,6 +36,13 @@ public class AttendanceDaoImpl extends BaseDaoImpl implements AttendanceDao {
     }
 
     @Override
+    public List getCourseUserList(String id) {
+        String sql = "select * from "+ TableName.Attendance + " s where s.course_id = '"+id+"'";
+        List<Attendance> list = sessionFactory.getCurrentSession().createSQLQuery(sql).addEntity(Attendance.class).list();
+        return list;
+    }
+
+    @Override
     public Boolean saveAttendanceInfo(Attendance attendance) {
         try {
             sessionFactory.getCurrentSession().save(attendance);

@@ -25,6 +25,18 @@ public class CourseDaoImpl extends BaseDaoImpl implements CourseDao {
     }
 
     @Override
+    public Course getAttendCourse(String id) {
+        String sql = "select c.id,c.name,c.remainder_times,c.total_times,c.classroom,c.start_time from " + TableName.Course +
+                " c left join " + TableName.Attendance + " a on c.id = a.course_id where a.user_id = '" + id + "' and c.is_attend = 3";
+        List<Course> list = sessionFactory.getCurrentSession().createSQLQuery(sql).addEntity(Course.class).list();
+        if (list.size() > 0) {
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public List getTodayCourseList(String id) {
         String sql = "select c.id,c.name,c.remainder_times,c.total_times,c.classroom,c.start_time from " + TableName.Course +
                 " c left join "+ TableName.Attendance+ " a on c.id = a.course_id where a.user_id = '" + id + "' and c.is_attend > 1";
@@ -60,6 +72,13 @@ public class CourseDaoImpl extends BaseDaoImpl implements CourseDao {
     @Override
     public List getCourseGroupList(String id) {
         String sql = "select c.group_id from " + TableName.GroupCourse + " c where c.course_id = '" + id + "'";
+        return getRecordData(sql, null, jdbcTemplate);
+    }
+
+    @Override
+    public List getCourseGroupUserList(String cid, String gid) {
+        String sql = "select a.user_id,u.user_name from " + TableName.Attendance + " a left join " + TableName.GroupUser + " g on g.user_id = a.user_id " +
+                " left join "+ TableName.User+" u on a.user_id = u.id where a.course_id = '" + cid + "' and g.group_id = '" + gid + "'";
         return getRecordData(sql, null, jdbcTemplate);
     }
 }

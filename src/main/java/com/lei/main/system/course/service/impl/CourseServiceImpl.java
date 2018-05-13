@@ -24,6 +24,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public Course getAttendCourse(String id) {
+        return courseDao.getAttendCourse(id);
+    }
+
+    @Override
     public DataStore getCourseListByName(Map<String, String> map) {
         return courseDao.getCourseListByName(map);
     }
@@ -41,5 +46,10 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List getCourseGroupList(String id) {
         return courseDao.getCourseGroupList(id);
+    }
+
+    @Override
+    public List getCourseGroupUserList(String cid, String gid) {
+        return courseDao.getCourseGroupUserList(cid, gid);
     }
 }

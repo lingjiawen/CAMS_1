@@ -18,11 +18,11 @@ public interface AttendanceService {
 
     TempCourse getTempCourse(String id);
 
-    Member getGroupMemberById(String gid, String uid);
+    Member getCourseMemberById(String cid, String uid);
 
-    Map<String, Member> getGroupMemberList(String gid, long overTime);
+    Map<String, Member> getCourseMemberList(String cid);
 
-    void saveGroupMember(String gid, Member m) throws Exception;
+    void saveCourseMember(String cid, Member m) throws Exception;
 
     void updateCourseWeek() throws Exception;
 

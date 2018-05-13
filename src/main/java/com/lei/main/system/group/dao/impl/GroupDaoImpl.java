@@ -5,6 +5,7 @@ import com.lei.main.system.group.bean.Group;
 import com.lei.main.system.group.bean.GroupCourse;
 import com.lei.main.system.group.bean.GroupUser;
 import com.lei.main.system.group.dao.GroupDao;
+import com.lei.main.system.systemManager.bean.User;
 import com.lei.util.TableName;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,18 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 
     @Override
     public List getUserGroupList(String id) {
-        String sql = "select g.id,g.name from " + TableName.Group + " g left join "+
-                TableName.GroupUser+ " u on g.id = u.group_id where u.user_id = '" + id + "' and u.status = 1";
+        String sql = "select g.id,g.name,g.group_logo from " + TableName.Group + " g left join "+
+                TableName.GroupUser+ " u on g.id = u.group_id where u.user_id = '" + id + "'";//邀请直接加入，不考虑状态 and u.status = 1
         return getRecordData(sql, null, jdbcTemplate);
+    }
+
+    @Override
+    public List<User> getGroupUserList(String id) {
+        String sql = "select u.* from " + TableName.Group + " g left join "+
+                TableName.GroupUser+ " gu on g.id = gu.group_id left join "+
+                TableName.User +" u on gu.user_id = u.id where g.id = '" + id + "'";//不考虑状态
+        List<User> list = sessionFactory.getCurrentSession().createSQLQuery(sql).addEntity(User.class).list();
+        return list;
     }
 
     @Override
