@@ -4,12 +4,16 @@ import com.lei.main.comm.bean.Message;
 import com.lei.main.comm.dao.redis.RedisUtil;
 import com.lei.main.comm.service.FileService;
 import com.lei.main.comm.util.Common;
+import com.lei.main.comm.util.Constant;
 import com.lei.main.system.attendance.bean.Member;
 import com.lei.main.system.attendance.bean.Position;
 import com.lei.main.system.systemManager.bean.Friend;
+import com.lei.main.system.systemManager.bean.School;
 import com.lei.main.system.systemManager.bean.User;
+import com.lei.main.system.systemManager.service.DictionaryManager;
 import com.lei.main.system.systemManager.service.FriendService;
 import com.lei.main.system.systemManager.service.UserManager;
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +37,8 @@ public class UserManagerController {
     private FriendService friendService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private DictionaryManager dictionaryManager;
 
     @ApiOperation(value = "获取好友列表", notes = "0失败，1成功")
     @RequestMapping(value = "getFriendList.do", method = RequestMethod.POST)
@@ -43,7 +49,7 @@ public class UserManagerController {
         return Common.messageBox(list);
     }
 
-    @ApiOperation(value = "添加好友", notes = "0失败，1成功，2用户不存在，3已是好友")
+    @ApiOperation(value = "添加好友", notes = "0失败，1成功，2用户不存在，3已是好友，4无法添加自己")
     @RequestMapping(value = "addFriend.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<String> addFriend(HttpServletRequest request,
@@ -54,6 +60,9 @@ public class UserManagerController {
         User user2 = userManager.getUserById(fid);
         if (user2 == null) {
             return Common.messageBox("2", "该用户不存在");
+        }
+        if (user1.getUserId() == user2.getUserId()) {
+            return Common.messageBox("4", "无法添加自己为好友");
         }
         String id = user1.getUserId().toString();
         Friend ship1 = friendService.getFriendshipById(id, fid);
@@ -202,6 +211,7 @@ public class UserManagerController {
         }
         if (user != null) {
             user.cleanPrivateInfo();//清除个人信息
+            user.setSchool(Constant.DSchool.get(user.getSchool()).getName());//显示学校名
         }
         return Common.messageBox(user);
     }
@@ -246,12 +256,28 @@ public class UserManagerController {
     @ApiOperation(value = "修改用户学校", notes = "0失败，1成功")
     @RequestMapping(value = "updateUserSchool.do", method = RequestMethod.POST)
     @ResponseBody
-    public Message<String> updateUserSchool(HttpServletRequest request, @ApiParam("学校")@RequestParam Integer school) {
+    public Message<String> updateUserSchool(HttpServletRequest request, @ApiParam("学校")@RequestParam String school) {
         User user = Common.getCurrentUser(request);
         user.setSchool(school);
         Boolean rs = userManager.saveUser(user);
         if (rs) {
             Common.updateSessionUser(request, user);
+            return Common.messageBox(Common.success);
+        } else {
+            return Common.messageBox(Common.failed);
+        }
+    }
+
+    @ApiOperation(value = "修改或新增学校", notes = "0失败，1成功")
+    @RequestMapping(value = "saveSchool.do", method = RequestMethod.POST)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "学校编号", paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "name", value = "校名", paramType = "query", dataType = "String", required = true)})
+    @ResponseBody
+    public Message<String> saveSchool(@ApiIgnore School school) {
+        Boolean rs = userManager.saveSchool(school);
+        if (rs) {
+            Constant.DSchool = dictionaryManager.getSchoolDictionaryItems();
             return Common.messageBox(Common.success);
         } else {
             return Common.messageBox(Common.failed);
@@ -296,3 +322,5 @@ public class UserManagerController {
         return Common.messageBox(Common.failed);
     }
 }
+
+

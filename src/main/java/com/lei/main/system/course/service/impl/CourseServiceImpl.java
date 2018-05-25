@@ -4,6 +4,8 @@ import com.lei.main.comm.dao.page.DataStore;
 import com.lei.main.system.course.bean.Course;
 import com.lei.main.system.course.dao.CourseDao;
 import com.lei.main.system.course.service.CourseService;
+import com.lei.main.system.systemManager.bean.SchoolBuilding;
+import com.lei.main.system.systemManager.bean.TeachBuilding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course getAttendCourse(String id) {
+    public Object getAttendCourse(String id) {
         return courseDao.getAttendCourse(id);
     }
 
@@ -51,5 +53,25 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List getCourseGroupUserList(String cid, String gid) {
         return courseDao.getCourseGroupUserList(cid, gid);
+    }
+
+    @Override
+    public List<TeachBuilding> getSchoolTeachBuildingList(String id) {
+        return courseDao.getSchoolTeachBuildingList(id);
+    }
+
+    @Override
+    public Boolean saveTeachBuilding(TeachBuilding teachBuilding) {
+        return courseDao.saveTeachBuilding(teachBuilding);
+    }
+
+    @Override
+    public TeachBuilding getTeachBuildingByName(String id, String name) {
+        return courseDao.getTeachBuildingByName(id, name);
+    }
+
+    @Override
+    public Boolean saveSchoolBuilding(SchoolBuilding schoolBuilding) {
+        return courseDao.saveSchoolBuilding(schoolBuilding);
     }
 }

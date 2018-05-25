@@ -3,15 +3,17 @@ package com.lei.main.system.course.action;
 import com.lei.main.comm.bean.Message;
 import com.lei.main.comm.dao.page.DataStore;
 import com.lei.main.comm.util.Common;
+import com.lei.main.comm.util.Constant;
 import com.lei.main.system.attendance.bean.Attendance;
 import com.lei.main.system.attendance.bean.Member;
 import com.lei.main.system.attendance.service.AttendanceService;
 import com.lei.main.system.course.bean.Course;
 import com.lei.main.system.course.service.CourseService;
-import com.lei.main.system.group.bean.Group;
-import com.lei.main.system.group.bean.GroupUser;
 import com.lei.main.system.group.service.GroupService;
+import com.lei.main.system.systemManager.bean.SchoolBuilding;
+import com.lei.main.system.systemManager.bean.TeachBuilding;
 import com.lei.main.system.systemManager.bean.User;
+import com.lei.main.system.systemManager.service.DictionaryManager;
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiImplicitParams;
@@ -37,6 +39,8 @@ public class CourseController {
     private GroupService groupService;
     @Autowired
     private AttendanceService attendanceService;
+    @Autowired
+    private DictionaryManager dictionaryManager;
 
     @ApiOperation(value = "根据id获取课程信息", notes ="0失败，1成功")
     @RequestMapping(value = "getCourseById.do", method = RequestMethod.POST)
@@ -49,9 +53,9 @@ public class CourseController {
     @ApiOperation(value = "获取当前进行的课程", notes ="0失败，1成功")
     @RequestMapping(value = "getAttendCourse.do", method = RequestMethod.POST)
     @ResponseBody
-    public Message<Course> getAttendCourse(HttpServletRequest request) {
+    public Message<Object> getAttendCourse(HttpServletRequest request) {
         User user = Common.getCurrentUser(request);
-        Course course = courseService.getAttendCourse(user.getUserId().toString());
+        Object course = courseService.getAttendCourse(user.getUserId().toString());
         return Common.messageBox(course);
     }
 
@@ -79,13 +83,20 @@ public class CourseController {
         return data;
     }
 
+    @ApiOperation(value = "根据学校查找教学楼", notes ="无")
+    @RequestMapping(value = "getSchoolTeachBuildingList.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Message<List> getSchoolTeachBuildingList(HttpServletRequest request) {
+        User user = Common.getCurrentUser(request);
+        List<TeachBuilding> list = courseService.getSchoolTeachBuildingList(user.getSchool());
+        return Common.messageBox(list);
+    }
+
     @ApiOperation(value = "修改或新建课程信息", notes ="填编号为修改，不填为新建；0失败，1成功，2上课期间无法修改，3自动加入课程失败请手动加入")
     @RequestMapping(value = "saveCourseInfo.do", method = RequestMethod.POST)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "课程编号", paramType = "query", dataType = "Long"),
             @ApiImplicitParam(name = "name", value = "课程名", paramType = "query", dataType = "String", required = true),
-            @ApiImplicitParam(name = "lng", value = "经度", paramType = "query", dataType = "Double", required = true),
-            @ApiImplicitParam(name = "lat", value = "纬度", paramType = "query", dataType = "Double", required = true),
             @ApiImplicitParam(name = "week", value = "上课周数，','分割", paramType = "query", dataType = "String", required = true),
             @ApiImplicitParam(name = "current", value = "当前周", paramType = "query", dataType = "Long", required = true),
             @ApiImplicitParam(name = "day", value = "上课星期，','分割", paramType = "query", dataType = "String", required = true),
@@ -95,7 +106,7 @@ public class CourseController {
             @ApiImplicitParam(name = "remainderTimes", value = "剩余次数", paramType = "query", dataType = "Long", required = true),
             @ApiImplicitParam(name = "totalTimes", value = "总次数", paramType = "query", dataType = "Long", required = true),
             @ApiImplicitParam(name = "remark", value = "备注", paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "classroom", value = "课室", paramType = "query", dataType = "String")})
+            @ApiImplicitParam(name = "classroom", value = "课室，'-'分隔，如'A1-201'", paramType = "query", dataType = "String")})
     @ResponseBody
     public Message<String> saveCourseInfo(HttpServletRequest request, @ApiIgnore Course course) {
         Boolean rs = false;
@@ -146,11 +157,15 @@ public class CourseController {
         }
     }
 
-    @ApiOperation(value = "学生加入课程", notes ="0失败，1成功，2已加入")
+    @ApiOperation(value = "学生加入课程", notes ="0失败，1成功，2已加入，3课程不存在")
     @RequestMapping(value = "joinCourseById.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<String> joinCourseById(HttpServletRequest request, @ApiParam("课程编号")@RequestParam Integer courseId) {
         User user = Common.getCurrentUser(request);
+        Course c = courseService.getCourseInfoById(courseId.toString());
+        if (c == null) {
+            return Common.messageBox("3", "课程不存在");
+        }
         Attendance attendance = attendanceService.getAttendanceById(user.getUserId().toString(), courseId.toString());
         if (attendance != null) {
             if (attendance.getIsQuit() == 0) {
@@ -188,6 +203,40 @@ public class CourseController {
             }
         }
         return Common.messageBox(l);
+    }
+
+    @ApiOperation(value = "修改或新增教学楼", notes ="0失败，1成功，2未填学校编号")
+    @RequestMapping(value = "saveTeachBuilding.do", method = RequestMethod.POST)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "学校编号", paramType = "query", dataType = "Long", required = true),
+            @ApiImplicitParam(name = "name", value = "教学楼名", paramType = "query", dataType = "String", required = true),
+            @ApiImplicitParam(name = "lng", value = "经度", paramType = "query", dataType = "Double", required = true),
+            @ApiImplicitParam(name = "lat", value = "纬度", paramType = "query", dataType = "Double", required = true)})
+    @ResponseBody
+    public Message<String> saveTeachBuilding(@ApiIgnore TeachBuilding building) {
+        if (building.getId() == null) {
+            return Common.messageBox("2", "未填写学校编号");
+        }
+        TeachBuilding b = courseService.getTeachBuildingByName(building.getId().toString(), building.getName());
+        Boolean rs = false;
+        if (b != null) {
+            building.setId(b.getId());
+            rs = courseService.saveTeachBuilding(building);
+        } else {
+            SchoolBuilding sb = new SchoolBuilding();
+            sb.setSchoolId(building.getId());//学校编号
+            building.setId(null);
+            rs = courseService.saveTeachBuilding(building);
+            sb.setBuildingId(building.getId());//教学楼编号
+            courseService.saveSchoolBuilding(sb);
+        }
+
+        if (rs) {
+            Constant.DTeachBuilding = dictionaryManager.getTeachBuildingDictionaryItems();
+            return Common.messageBox(Common.success);
+        } else {
+            return Common.messageBox(Common.failed);
+        }
     }
 
     /*@ApiOperation(value = "学生加入群组的所有课程", notes ="0失败，1成功，2群组不存在，3不在群组中")

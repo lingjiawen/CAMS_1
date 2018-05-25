@@ -2,10 +2,17 @@ package com.lei.main.comm.bean;
 
 import com.lei.main.system.systemManager.bean.User;
 
-public class DictionaryEntity {
+public class DictionaryEntity extends Entity {
 
     private String id;
     private String name;
+
+    public DictionaryEntity() {}
+
+    public DictionaryEntity(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public DictionaryEntity(User g) {
         this.id = g.getUserId().toString();

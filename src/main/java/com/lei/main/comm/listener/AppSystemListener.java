@@ -1,5 +1,9 @@
 package com.lei.main.comm.listener;
 
+import com.lei.main.comm.util.Common;
+import com.lei.main.comm.util.Constant;
+import com.lei.main.system.systemManager.service.DictionaryManager;
+import com.lei.util.TableName;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -39,7 +43,8 @@ public class AppSystemListener implements ServletContextListener {
     }
 
     public void loadDictionary(ApplicationContext context){
-
-
+        DictionaryManager dictionaryManager = getBean(context,DictionaryManager.class);
+        Constant.DSchool = dictionaryManager.getSchoolDictionaryItems();
+        Constant.DTeachBuilding = dictionaryManager.getTeachBuildingDictionaryItems();
     }
 }

@@ -1,6 +1,7 @@
 package com.lei.main.system.systemManager.dao;
 
 import com.lei.main.comm.dao.BaseDao;
+import com.lei.main.system.systemManager.bean.School;
 import com.lei.main.system.systemManager.bean.User;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
@@ -20,4 +21,6 @@ public interface UserDao extends BaseDao {
     User getUserByUserName(String name);
 
     Boolean saveUser(User user);
+
+    Boolean saveSchool(School school);
 }

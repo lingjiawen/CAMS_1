@@ -1,5 +1,6 @@
 package com.lei.main.system.systemManager.service.impl;
 
+import com.lei.main.system.systemManager.bean.School;
 import com.lei.main.system.systemManager.bean.User;
 import com.lei.main.system.systemManager.dao.UserDao;
 import com.lei.main.system.systemManager.service.UserManager;
@@ -33,22 +34,12 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public int removeUser(String id) throws Exception {
-        return 0;
-    }
-
-    @Override
-    public Map<String, Object> getUserList(Map<?, ?> params) throws Exception {
-        return null;
-    }
-
-    @Override
     public User getUserById(String id) {
         return userDao.getUserById(id);
     }
 
     @Override
-    public void updateUser(int userId, List<String> userRoleIds) throws Exception {
-
+    public Boolean saveSchool(School school) {
+        return userDao.saveSchool(school);
     }
 }

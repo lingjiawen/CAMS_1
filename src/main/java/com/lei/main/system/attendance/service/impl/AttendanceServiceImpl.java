@@ -8,6 +8,7 @@ import com.lei.main.system.attendance.bean.TempCourse;
 import com.lei.main.system.attendance.dao.AttendanceDao;
 import com.lei.main.system.attendance.service.AttendanceService;
 import com.lei.main.system.course.bean.Course;
+import com.lei.main.system.systemManager.bean.TeachBuilding;
 import com.lei.main.system.systemManager.bean.User;
 import com.lei.main.system.systemManager.service.UserManager;
 import com.lei.util.DateUtils;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Transactional
 @Service("attendanceService")
@@ -87,8 +87,10 @@ public class AttendanceServiceImpl implements AttendanceService {
         for (int i = 0; i < list.size(); i++) {
             Course c = list.get(i);
             String key = c.getId().toString();
+            String[] s = c.getClassroom().split("-");
+            TeachBuilding building = Constant.DTeachBuilding.get(s[0]);
             c.setIsAttend(3);
-            TempCourse temp = new TempCourse(c, 20);
+            TempCourse temp = new TempCourse(c, building, 20);
             redisUtil.setHashItem(Constant.courseSet, key, temp);
         }
     }

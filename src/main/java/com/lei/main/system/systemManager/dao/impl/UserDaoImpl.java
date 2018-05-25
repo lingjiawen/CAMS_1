@@ -1,6 +1,7 @@
 package com.lei.main.system.systemManager.dao.impl;
 
 import com.lei.main.comm.dao.jdbc.BaseDaoImpl;
+import com.lei.main.system.systemManager.bean.School;
 import com.lei.main.system.systemManager.bean.User;
 import com.lei.main.system.systemManager.dao.UserDao;
 import com.lei.util.TableName;
@@ -57,6 +58,17 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
     public Boolean saveUser(User user) {
         try {
             sessionFactory.getCurrentSession().saveOrUpdate(user);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean saveSchool(School school) {
+        try {
+            sessionFactory.getCurrentSession().saveOrUpdate(school);
         }catch (Exception e) {
             e.printStackTrace();
             return false;

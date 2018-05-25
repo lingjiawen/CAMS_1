@@ -3,6 +3,7 @@ package com.lei.main.system.group.action;
 import com.lei.main.comm.bean.Message;
 import com.lei.main.comm.service.FileService;
 import com.lei.main.comm.util.Common;
+import com.lei.main.comm.util.Constant;
 import com.lei.main.system.course.bean.Course;
 import com.lei.main.system.course.service.CourseService;
 import com.lei.main.system.group.bean.Group;
@@ -126,7 +127,11 @@ public class GroupController {
     @RequestMapping(value = "getGroupUserList.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<List> getGroupUserList(@ApiParam("群组编号")@RequestParam String id) {
-        List list = groupService.getGroupUserList(id);
+        List<User> list = groupService.getGroupUserList(id);
+        for (User u : list) {
+            u.cleanPrivateInfo();
+            u.setSchool(Constant.DSchool.get(u.getSchool()).getName());
+        }
         return Common.messageBox(list);
     }
 

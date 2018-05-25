@@ -2,6 +2,7 @@ package com.lei.main.system.attendance.bean;
 
 import com.lei.main.comm.bean.Entity;
 import com.lei.main.system.course.bean.Course;
+import com.lei.main.system.systemManager.bean.TeachBuilding;
 
 import java.sql.Time;
 import java.util.Map;
@@ -23,11 +24,11 @@ public class TempCourse extends Entity {
 
     public TempCourse() {}
 
-    public TempCourse(Course course, int radius) {
+    public TempCourse(Course course, TeachBuilding building, int radius) {
         this.id = course.getId();
         this.name = course.getName();
-        this.lng = course.getLng();
-        this.lat = course.getLat();
+        this.lng = building.getLng();
+        this.lat = building.getLat();
         this.duration = (course.getEndTime().getTime() - course.getStartTime().getTime())/(60 * 1000);
         this.startTime = course.getStartTime();
         this.endTime = course.getEndTime();

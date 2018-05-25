@@ -5,9 +5,7 @@ import com.lei.main.comm.util.Common;
 import com.lei.main.system.attendance.bean.Member;
 import com.lei.main.system.attendance.bean.TempCourse;
 import com.lei.main.system.attendance.service.AttendanceService;
-import com.lei.main.system.course.bean.Course;
 import com.lei.main.system.course.service.CourseService;
-import com.lei.main.system.group.bean.GroupUser;
 import com.lei.main.system.group.service.GroupService;
 import com.lei.util.DateUtils;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -24,9 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Time;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -70,7 +66,7 @@ public class AttendanceController {
         //System.out.println(Thread.currentThread().getName());
     }
 
-    @ApiOperation(value = "记录用户位置", notes ="0失败，1成功，2课程未开始，3课程已结束")
+    @ApiOperation(value = "记录用户位置", notes ="0失败，1成功，2课程未开始，3课程已结束,4不在上课范围内")
     @RequestMapping(value = "recordPosition.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<String> recordPosition(HttpServletRequest request,
@@ -94,8 +90,10 @@ public class AttendanceController {
             return Common.messageBox("3", "课程已结束");
         }
         Member m;
+        Boolean rs = false;
         if (t.judgePosition(lng, lat)) {//是否正确签到
             m = new Member(uid, lng, lat, 1);
+            rs = true;
         } else {
             m = new Member(uid, lng, lat, 0);
         }
@@ -105,7 +103,11 @@ public class AttendanceController {
             e.printStackTrace();
             return Common.messageBox(Common.failed);
         }
-        return Common.messageBox(Common.success);
+        if (rs) {
+            return Common.messageBox(Common.success);
+        } else {
+            return Common.messageBox("4", "未处于上课范围内");
+        }
     }
 
     private void pushNotice(String id) {

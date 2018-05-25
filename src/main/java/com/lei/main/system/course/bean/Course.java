@@ -15,10 +15,6 @@ public class Course {
     private Integer id;
     @ApiModelProperty("课程名")
     private String name;
-    @ApiModelProperty("经度")
-    private Double lng;
-    @ApiModelProperty("纬度")
-    private Double lat;
     @ApiModelProperty("上课周数")
     private String week;
     @ApiModelProperty("当前周")
@@ -47,8 +43,6 @@ public class Course {
 
     public void setCourseBaseInfo(Course course) {
         this.name = course.getName();
-        this.lng = course.getLng();
-        this.lat = course.getLat();
         this.week = course.getWeek();
         this.current = course.getCurrent();
         this.day = course.getDay();
@@ -100,22 +94,6 @@ public class Course {
 
     public void setName(String name) {
         this.name = name;
-    }
-    @Column(name="lng")
-    public Double getLng() {
-        return lng;
-    }
-
-    public void setLng(Double lng) {
-        this.lng = lng;
-    }
-    @Column(name="lat")
-    public Double getLat() {
-        return lat;
-    }
-
-    public void setLat(Double lat) {
-        this.lat = lat;
     }
     @Column(name="week")
     public String getWeek() {
