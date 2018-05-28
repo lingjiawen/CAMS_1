@@ -34,4 +34,6 @@ public interface AttendanceService {
 
     void updateCourseEnd() throws Exception;
 
+    String sendSmsCode(String phone, String name, String course);
+
 }

@@ -6,6 +6,7 @@ import com.lei.main.system.course.dao.CourseDao;
 import com.lei.main.system.course.service.CourseService;
 import com.lei.main.system.systemManager.bean.SchoolBuilding;
 import com.lei.main.system.systemManager.bean.TeachBuilding;
+import com.lei.main.system.systemManager.bean.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +52,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List getCourseGroupUserList(String cid, String gid) {
+    public List<User> getCourseGroupUserList(String cid, String gid) {
         return courseDao.getCourseGroupUserList(cid, gid);
     }
 

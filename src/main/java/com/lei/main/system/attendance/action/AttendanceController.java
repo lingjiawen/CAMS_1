@@ -1,15 +1,19 @@
 package com.lei.main.system.attendance.action;
 
+import com.google.gson.JsonObject;
 import com.lei.main.comm.bean.Message;
 import com.lei.main.comm.util.Common;
-import com.lei.main.system.attendance.bean.Member;
-import com.lei.main.system.attendance.bean.TempCourse;
+import com.lei.main.system.attendance.bean.*;
+import com.lei.main.system.course.bean.Course;
+import com.lei.main.system.systemManager.bean.User;
 import com.lei.main.system.attendance.service.AttendanceService;
 import com.lei.main.system.course.service.CourseService;
 import com.lei.main.system.group.service.GroupService;
+import com.lei.main.system.systemManager.service.UserManager;
 import com.lei.util.DateUtils;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -35,9 +39,8 @@ public class AttendanceController {
     private GroupService groupService;
     @Autowired
     private AttendanceService attendanceService;
-
     @Autowired
-    private ThreadPoolTaskExecutor taskExecutor;
+    private UserManager userManager;
 
     /**
      * 考察课堂迟到情况
@@ -66,7 +69,7 @@ public class AttendanceController {
         //System.out.println(Thread.currentThread().getName());
     }
 
-    @ApiOperation(value = "记录用户位置", notes ="0失败，1成功，2课程未开始，3课程已结束,4不在上课范围内")
+    @ApiOperation(value = "记录用户位置", notes ="0失败，1成功，2课程未开始，3课程已结束，4不在上课范围内")
     @RequestMapping(value = "recordPosition.do", method = RequestMethod.POST)
     @ResponseBody
     public Message<String> recordPosition(HttpServletRequest request,
@@ -110,13 +113,27 @@ public class AttendanceController {
         }
     }
 
-    private void pushNotice(String id) {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    @ApiOperation(value = "短信通知提醒", notes ="0失败，1成功，2用户不存在，3课程不存在，4用户不在课程中")
+    @RequestMapping(value = "pushNotice.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Message pushNotice(@ApiParam("课程编号")@RequestParam String cid,
+                              @ApiParam("用户编号")@RequestParam String uid) {
+        User user = userManager.getUserById(uid);
+        if (user == null) {
+            return Common.messageBox("2", "用户不存在");
         }
-        System.out.println(id+"迟到啦？！！");
+        Course course = courseService.getCourseInfoById(cid);
+        if (course == null) {
+            return Common.messageBox("3", "课程不存在");
+        }
+        Attendance a = attendanceService.getAttendanceById(uid, cid);
+        if (a == null) {
+            return Common.messageBox("4", "用户不在课程中");
+        }
+        String s = attendanceService.sendSmsCode(user.getTelephone(), user.getUserName(), course.getName());
+        JSONObject jsonObject=JSONObject.fromObject(s);
+        SmsCode code=(SmsCode)JSONObject.toBean(jsonObject, SmsCode.class);
+        return Common.messageBox(code);
     }
 
 }

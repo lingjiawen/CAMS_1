@@ -19,7 +19,7 @@ public class User {
     private String userPassword;//(32位MD5加密)
     @ApiModelProperty("性别 0女，1男")
     private String sex;
-    @ApiModelProperty("状态，0-无效，1-有效")
+    @ApiModelProperty("状态，0未提醒，1已提醒")
     private Integer status;
     @ApiModelProperty(value = "联系电话")
     private String telephone;

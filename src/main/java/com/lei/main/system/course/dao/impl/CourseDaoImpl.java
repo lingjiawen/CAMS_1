@@ -6,6 +6,7 @@ import com.lei.main.system.course.bean.Course;
 import com.lei.main.system.course.dao.CourseDao;
 import com.lei.main.system.systemManager.bean.SchoolBuilding;
 import com.lei.main.system.systemManager.bean.TeachBuilding;
+import com.lei.main.system.systemManager.bean.User;
 import com.lei.util.TableName;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
@@ -78,10 +79,10 @@ public class CourseDaoImpl extends BaseDaoImpl implements CourseDao {
     }
 
     @Override
-    public List getCourseGroupUserList(String cid, String gid) {
-        String sql = "select a.user_id,u.user_name from " + TableName.Attendance + " a left join " + TableName.GroupUser + " g on g.user_id = a.user_id " +
+    public List<User> getCourseGroupUserList(String cid, String gid) {
+        String sql = "select u.* from " + TableName.Attendance + " a left join " + TableName.GroupUser + " g on g.user_id = a.user_id " +
                 " left join "+ TableName.User+" u on a.user_id = u.id where a.course_id = '" + cid + "' and g.group_id = '" + gid + "'";
-        return getRecordData(sql, null, jdbcTemplate);
+        return sessionFactory.getCurrentSession().createSQLQuery(sql).addEntity(User.class).list();
     }
 
     @Override

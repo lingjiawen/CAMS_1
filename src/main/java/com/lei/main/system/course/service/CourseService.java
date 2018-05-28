@@ -4,6 +4,7 @@ import com.lei.main.comm.dao.page.DataStore;
 import com.lei.main.system.course.bean.Course;
 import com.lei.main.system.systemManager.bean.SchoolBuilding;
 import com.lei.main.system.systemManager.bean.TeachBuilding;
+import com.lei.main.system.systemManager.bean.User;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public interface CourseService {
 
     List getCourseGroupList(String id);
 
-    List getCourseGroupUserList(String cid, String gid);
+    List<User> getCourseGroupUserList(String cid, String gid);
 
     List<TeachBuilding> getSchoolTeachBuildingList(String id);
 

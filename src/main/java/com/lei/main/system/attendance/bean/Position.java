@@ -5,7 +5,13 @@ import java.util.Map;
 
 public class Position {
     private final static double PI = Math.PI;
-    private final static double R = 6378137.0; // 地球的半径
+    private final static double R = 6371.01; // 地球的半径，千米
+
+    private final static double MIN_LAT = Math.toRadians(-90d);  // -PI/2
+    private final static double MAX_LAT = Math.toRadians(90d);   //  PI/2
+    private final static double MIN_LON = Math.toRadians(-180d); // -PI
+    private final static double MAX_LON = Math.toRadians(180d);
+
     private Double lng;//经度
     private Double lat;//纬度
 
@@ -24,7 +30,7 @@ public class Position {
         double a = Lat1 - Lat2;//两点纬度之差
         double b = rad(lng) - rad(longitude); //经度之差
         double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(Lat1) * Math.cos(Lat2) * Math.pow(Math.sin(b / 2), 2)));//计算两点距离的公式
-        s = s * R;//弧长乘地球半径（半径为米）
+        s = s * R * 1000;//弧长乘地球半径（半径为米）
         s = Math.round(s * 10000d) / 10000d;//精确距离的数值
         return s;
     }
@@ -37,29 +43,46 @@ public class Position {
         return distance;
     }*/
 
-    public Map<String, Double> getAround(int radius) {
+    public Map<String, Double> getAround(double radius) {
         Map map = new HashMap<String, Double>();
-        Double latitude = lat;
-        Double longitude = lng;
 
-        Double degree = (24901 * 1609) / 360.0;
-        double radiusMile = radius;
+        double radLat = lat * PI / 180;  // latitude in radians
+        double radLon = lng * PI / 180;
 
-        Double dpmLat = 1 / degree;
-        Double radiusLat = dpmLat * radiusMile;
-        Double minLat = latitude - radiusLat;
-        Double maxLat = latitude + radiusLat;
+        double distance = radius / 1000;
+        if (distance < 0d)
+            throw new IllegalArgumentException();
 
-        Double mpdLng = degree * Math.cos(latitude * (PI / 180));
-        Double dpmLng = 1 / mpdLng;
-        Double radiusLng = dpmLng * radiusMile;
-        Double minLng = longitude - radiusLng;
-        Double maxLng = longitude + radiusLng;
+        // angular distance in radians on a great circle
+        double radDist = distance / R;
+
+        double minLat = radLat - radDist;
+        double maxLat = radLat + radDist;
+
+        double minLon, maxLon;
+        if (minLat > MIN_LAT && maxLat < MAX_LAT) {
+            double deltaLon = Math.asin(Math.sin(radDist) / Math.cos(radLat));
+            minLon = radLon - deltaLon;
+            if (minLon < MIN_LON) minLon += 2d * Math.PI;
+            maxLon = radLon + deltaLon;
+            if (maxLon > MAX_LON) maxLon -= 2d * Math.PI;
+        } else {
+            // a pole is within the distance
+            minLat = Math.max(minLat, MIN_LAT);
+            maxLat = Math.min(maxLat, MAX_LAT);
+            minLon = MIN_LON;
+            maxLon = MAX_LON;
+        }
+        //转换成角度
+        minLat = minLat*180/PI;
+        maxLat = maxLat*180/PI;
+        maxLon = maxLon*180/PI;
+        minLon = minLon*180/PI;
 
         map.put("minLat", minLat);
         map.put("maxLat", maxLat);
-        map.put("minLng", minLng);
-        map.put("maxLng", maxLng);
+        map.put("minLng", minLon);
+        map.put("maxLng", maxLon);
 
         return map;
     }

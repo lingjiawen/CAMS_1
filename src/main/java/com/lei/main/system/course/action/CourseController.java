@@ -8,6 +8,7 @@ import com.lei.main.system.attendance.bean.Attendance;
 import com.lei.main.system.attendance.bean.Member;
 import com.lei.main.system.attendance.service.AttendanceService;
 import com.lei.main.system.course.bean.Course;
+import com.lei.main.system.course.bean.TempUser;
 import com.lei.main.system.course.service.CourseService;
 import com.lei.main.system.group.service.GroupService;
 import com.lei.main.system.systemManager.bean.SchoolBuilding;
@@ -187,17 +188,17 @@ public class CourseController {
     public Message<List> getCourseAttendInfo(@ApiParam("群组编号")@RequestParam String gid,
                                              @ApiParam("课程编号")@RequestParam String cid) {
         List l = new ArrayList();
-        List list = courseService.getCourseGroupUserList(gid, cid);
-        for (Object o : list) {
-            Map map = Common.objectToMap(o);
-            Member m = attendanceService.getCourseMemberById(cid, map.get("user_id").toString());
+        List<User> list = courseService.getCourseGroupUserList(cid, gid);
+        for (User o : list) {
+            TempUser t = new TempUser(o);
+            Member m = attendanceService.getCourseMemberById(cid, o.getUserId().toString());
             if (m == null) {//是否签到
-                map.put("is_attend", 0);
+                t.setIsAttend(0);
             } else {
-                map.put("is_attend", m.getIsAttend());
+                t.setIsAttend(m.getIsAttend());
             }
             try {
-                l.add(Common.mapToObject(map, Object.class));
+                l.add(t);
             } catch (Exception e) {
                 e.printStackTrace();
             }
